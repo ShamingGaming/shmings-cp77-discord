@@ -1,4 +1,4 @@
-name: Update Discord Classnames
+name: Update Discord Themes
 on:
   schedule:
     - cron: '0 0 * * *' # Täglich um Mitternacht
@@ -18,26 +18,12 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Run Update Script
+      - name: Run Local Repair Script
         run: |
-          # Wir nutzen einen Link mit 'main' statt 'master'
-          # Sollte dieser Bot auch offline sein, nutzen wir eine Alternative
-          curl -o repair_tool.py https://raw.githubusercontent.com/CinfulSin/discord-update-classnames/main/main.py
-          
-          # Sicherheits-Check: Haben wir wirklich Code bekommen oder wieder nur einen Fehler?
-          if grep -q "404: Not Found" repair_tool.py; then
-            echo "ACHTUNG: Der Download-Link ist tot. Das Skript wird übersprungen, damit der Fehler weggeht."
-            echo "Bitte prüfe später nach einem neuen Tool."
-            exit 0
-          fi
-          
-          # Wenn alles okay ist, führen wir es aus
-          python repair_tool.py cp77.css cp77_2.css || echo "Skript lief mit Warnungen durch"
-          
-          # Aufräumen
-          rm -f repair_tool.py
+          # Wir führen einfach das Skript aus, das wir selbst hochgeladen haben
+          python repair.py cp77.css cp77_2.css
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Discord Update Check (Auto-Fix)"
+          commit_message: "Daily Theme Refresh (Local Script)"
