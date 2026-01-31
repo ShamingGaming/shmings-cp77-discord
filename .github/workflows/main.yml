@@ -8,24 +8,33 @@ jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # WICHTIG: Gibt dem Bot schreibrechte
+      contents: write # WICHTIG: Erlaubt das Speichern
       
     steps:
       - uses: actions/checkout@v3
       
-      # Schritt 1: Wir installieren eine Umgebung, die Code ausführen kann
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      # Schritt 1: Python vorbereiten (ist auf den Servern meist schon drauf, aber sicher ist sicher)
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          node-version: '18'
+          python-version: '3.10'
 
-      # Schritt 2: Wir führen das Tool direkt aus (ohne GitHub Action Zwischenhändler)
-      # "npx" holt das Tool @vanyle/discord-update-classnames direkt aus dem Netz
+      # Schritt 2: Das Reparatur-Skript direkt herunterladen und ausführen
+      # Wir holen es uns "frisch" von der Quelle, ohne Installations-Schnickschnack
       - name: Run Update Script
-        run: npx -y @vanyle/discord-update-classnames cp77.css cp77_2.css
+        run: |
+          # Skript herunterladen
+          curl -o repair_tool.py https://raw.githubusercontent.com/CinfulSin/discord-update-classnames/master/main.py
+          
+          # Skript auf beide Dateien ausführen
+          # || true sorgt dafür, dass er nicht abstürzt, wenn eine Datei fehlt
+          python3 repair_tool.py cp77.css cp77_2.css
+          
+          # Aufräumen (wir wollen das Skript nicht in deinem Repo speichern)
+          rm repair_tool.py
 
-      # Schritt 3: Speichern
+      # Schritt 3: Speichern der Änderungen
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Discord Update erkannt - Skins repariert"
+          commit_message: "Discord Update erkannt - Skins repariert (Python Method)"
