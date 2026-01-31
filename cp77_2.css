@@ -1,0 +1,130 @@
+/**
+ * THEME: Female V - Cyberpunk "Layer Mastery" (V24)
+ * FIX: Chat is darker & covers scanlines. Sidebars show scanlines.
+ */
+
+:root {
+    --bg-image: url('https://4kwallpapers.com/images/wallpapers/female-v-cyberpunk-3840x2160-13542.jpg');
+    --neon-pink: #ff00ff;
+    --neon-cyan: #00ffff;
+    --neon-purple: #9d00ff;
+    --danger-red: #ff0000;
+    
+    /* Hintergrund-Farben */
+    --popout-bg: rgba(10, 5, 15, 0.95); 
+    --chat-dim: rgba(0, 0, 0, 0.75); /* 75% Dunkelheit im Chat */
+}
+
+/* --- 1. SCANLINES (EBENE 0 - Ganz hinten) --- */
+body::after {
+    content: "";
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    z-index: 0 !important; /* Hinter den Fenstern, aber vor dem Wallpaper */
+    pointer-events: none;
+    opacity: 0.8; /* Kräftig, damit sie an den Seiten sichtbar sind */
+}
+
+/* --- 2. BASIS --- */
+body, #app-mount {
+    background: var(--bg-image) center/cover no-repeat fixed !important;
+}
+
+/* --- 3. CHAT BEREICH (EBENE 5 - Die Ruhezone) --- */
+/* Dieser Bereich liegt ÜBER den Scanlines und dunkelt sie ab */
+[class^="chatContent_"] {
+    background: transparent !important;
+    z-index: 5 !important; /* Höher als Scanlines (0) */
+    position: relative;
+}
+
+/* Die dunkle Tönung im Chat */
+[class^="chatContent_"]::before {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--chat-dim) !important; /* Hier wird es dunkel */
+    backdrop-filter: blur(2px); /* Leichter Blur für Lesbarkeit */
+    z-index: -1;
+}
+
+/* --- 4. ANIMATIONEN --- */
+@keyframes borderGlow {
+    0% { border-color: var(--neon-pink); box-shadow: 0 0 20px var(--neon-pink); }
+    50% { border-color: var(--neon-cyan); box-shadow: 0 0 20px var(--neon-cyan); }
+    100% { border-color: var(--neon-pink); box-shadow: 0 0 20px var(--neon-pink); }
+}
+
+/* --- 5. DAS USER-POPOUT (EBENE 100 - Ganz oben) --- */
+div[class*="userPopoutOuter"] {
+    clip-path: polygon(5% 0%, 100% 0%, 95% 95%, 0% 100%) !important;
+    background: var(--popout-bg) !important;
+    border: 3px solid var(--neon-pink) !important;
+    animation: borderGlow 4s infinite alternate !important;
+    padding: 15px !important;
+    z-index: 100 !important; /* Über allem */
+}
+
+/* Popout Details (Bunt & Cool) */
+div[class*="banner_"] {
+    background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple)) !important;
+    opacity: 0.6 !important;
+    height: 100px !important;
+}
+div[class*="avatarWrapper_"] {
+    border: 3px solid var(--neon-cyan) !important;
+    box-shadow: 0 0 15px var(--neon-cyan);
+    background: #000;
+}
+[class*="role_"] {
+    background: rgba(157, 0, 255, 0.2) !important;
+    border: 1px solid var(--neon-purple) !important;
+    color: white !important;
+}
+div[class*="userPopoutInner"] button {
+    background: var(--neon-cyan) !important;
+    color: #000 !important;
+    font-weight: 900 !important;
+    border: none !important;
+    box-shadow: 0 0 10px var(--neon-cyan);
+}
+div[class*="userPopoutInner"] button:hover {
+    background: var(--neon-pink) !important;
+    box-shadow: 0 0 20px var(--neon-pink);
+    transform: scale(1.05);
+}
+
+/* --- 6. SEITENLEISTEN (EBENE 2 - Leicht transparent) --- */
+/* Hier wollen wir die Scanlines durchsehen */
+[class^="sidebar_"], [class^="members_"] {
+    margin: 15px !important;
+    border-radius: 12px !important;
+    /* Etwas transparenter (0.6), damit Scanlines von hinten (z-index 0) durchkommen */
+    background: rgba(0, 0, 0, 0.6) !important; 
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--neon-pink) !important;
+    z-index: 2 !important;
+}
+
+/* User Panel unten links */
+section[class^="panels_"] {
+    background: #000 !important;
+    border-top: 3px solid var(--neon-pink) !important;
+    border-right: 3px solid var(--neon-pink) !important;
+    box-shadow: 5px -5px 15px rgba(255, 0, 255, 0.3);
+    z-index: 10 !important;
+}
+
+/* --- 7. CLEANUP & TEXT --- */
+[class^="messageContent_"] {
+    text-shadow: 1px 1px 2px black !important; /* Text poppt auf dunklem Hintergrund */
+}
+
+#app-mount, [class^="app_"], [class^="bg_"], [class^="container_"], 
+[class^="scroller_"], [class^="privateChannels_"], [class^="wrapper_"],
+[class^="content_"], [class^="chat_"] {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+::-webkit-scrollbar-thumb { background: var(--neon-cyan) !important; }
