@@ -1,8 +1,8 @@
 name: Update Discord Classnames
 on:
   schedule:
-    - cron: '0 0 * * *' # Startet jeden Tag um Mitternacht
-  workflow_dispatch: # Erlaubt dir den manuellen Start
+    - cron: '0 0 * * *' # Jeden Tag um Mitternacht
+  workflow_dispatch: # Für den manuellen Start
 
 jobs:
   update:
@@ -10,13 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      # HIER IST DER FIX: Wir nutzen DTM450 statt vanyle
       - name: Run Update Script
-        uses: vanyle/discord-update-classnames@master
+        uses: DTM450/discord-update-classnames@master
         with:
-          # Hier stehen alle BEIDE Dateien, getrennt durch ein Komma
           files: 'cp77.css, cp77_2.css'
           
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Discord Update erkannt - Beide Skins repariert"
+          commit_message: "Discord Update erkannt - Skins repariert"
