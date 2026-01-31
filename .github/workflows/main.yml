@@ -1,21 +1,30 @@
 name: Update Discord Classnames
 on:
   schedule:
-    - cron: '0 0 * * *' # Jeden Tag um Mitternacht
-  workflow_dispatch: # Für den manuellen Start
+    - cron: '0 0 * * *' # Täglich um Mitternacht
+  workflow_dispatch: # Manuell startbar
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # WICHTIG: Gibt dem Bot schreibrechte
+      
     steps:
       - uses: actions/checkout@v3
       
-      # HIER IST DER FIX: Wir nutzen DTM450 statt vanyle
-      - name: Run Update Script
-        uses: DTM450/discord-update-classnames@master
+      # Schritt 1: Wir installieren eine Umgebung, die Code ausführen kann
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          files: 'cp77.css, cp77_2.css'
-          
+          node-version: '18'
+
+      # Schritt 2: Wir führen das Tool direkt aus (ohne GitHub Action Zwischenhändler)
+      # "npx" holt das Tool @vanyle/discord-update-classnames direkt aus dem Netz
+      - name: Run Update Script
+        run: npx -y @vanyle/discord-update-classnames cp77.css cp77_2.css
+
+      # Schritt 3: Speichern
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
