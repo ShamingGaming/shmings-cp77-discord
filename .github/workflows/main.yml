@@ -13,7 +13,7 @@ jobs:
       - name: Run Update Script
         uses: vanyle/discord-update-classnames@master
         with:
-          # Hier stehen jetzt BEIDE Dateien, getrennt durch ein Komma
+          # Hier stehen alle BEIDE Dateien, getrennt durch ein Komma
           files: 'cp77.css, cp77_2.css'
           
       - name: Commit changes
