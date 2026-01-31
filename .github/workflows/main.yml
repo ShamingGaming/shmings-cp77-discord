@@ -1,19 +1,22 @@
 name: Update Discord Classnames
 on:
   schedule:
-    - cron: '0 0 * * *' # Der Bot schaut jeden Tag um Mitternacht nach
-  workflow_dispatch: # Erlaubt dir, es auch manuell zu starten
+    - cron: '0 0 * * *' # Startet jeden Tag um Mitternacht
+  workflow_dispatch: # Erlaubt dir den manuellen Start
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - name: Run Update Script
         uses: vanyle/discord-update-classnames@master
         with:
-          files: 'cp77.css' # Hier sagt er dem Bot, welche Datei er fixen soll
+          # Hier stehen jetzt BEIDE Dateien, getrennt durch ein Komma
+          files: 'cp77.css, cp77_2.css'
+          
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Discord Update erkannt - Klassen automatisch repariert"
+          commit_message: "Discord Update erkannt - Beide Skins repariert"
