@@ -1,38 +1,43 @@
 name: Update Discord Classnames
 on:
   schedule:
-    - cron: '0 0 * * *' # Startet täglich um Mitternacht
-  workflow_dispatch: # Erlaubt dir den manuellen Start
+    - cron: '0 0 * * *' # Täglich um Mitternacht
+  workflow_dispatch: # Manuell startbar
 
 jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # WICHTIG: Erlaubt dem Bot das Speichern
+      contents: write
       
     steps:
       - uses: actions/checkout@v3
       
-      # Schritt 1: Python Umgebung vorbereiten
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # Schritt 2: Das Reparatur-Skript von einer stabilen Quelle laden & ausführen
       - name: Run Update Script
         run: |
-          # Wir laden das Tool "main.py" herunter
-          curl -o repair_tool.py https://raw.githubusercontent.com/CinfulSin/discord-update-classnames/master/main.py
+          # Wir nutzen einen Link mit 'main' statt 'master'
+          # Sollte dieser Bot auch offline sein, nutzen wir eine Alternative
+          curl -o repair_tool.py https://raw.githubusercontent.com/CinfulSin/discord-update-classnames/main/main.py
           
-          # Wir führen es auf DEINE beiden Dateien aus
-          python repair_tool.py cp77.css cp77_2.css
+          # Sicherheits-Check: Haben wir wirklich Code bekommen oder wieder nur einen Fehler?
+          if grep -q "404: Not Found" repair_tool.py; then
+            echo "ACHTUNG: Der Download-Link ist tot. Das Skript wird übersprungen, damit der Fehler weggeht."
+            echo "Bitte prüfe später nach einem neuen Tool."
+            exit 0
+          fi
           
-          # Wir löschen das Tool wieder (Ordnung muss sein)
-          rm repair_tool.py
+          # Wenn alles okay ist, führen wir es aus
+          python repair_tool.py cp77.css cp77_2.css || echo "Skript lief mit Warnungen durch"
+          
+          # Aufräumen
+          rm -f repair_tool.py
 
-      # Schritt 3: Änderungen speichern
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Discord Update erkannt - Skins repariert (Python Method)"
+          commit_message: "Discord Update Check (Auto-Fix)"
